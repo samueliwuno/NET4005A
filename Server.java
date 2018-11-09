@@ -5,17 +5,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 
 //Implements the methods declared in the interface that will be invoked by the remote client.
 
 /**
  * 
- * @author samuel
- *
+ * @author Samuel Iwuno(100960021)
+ *@author Greg Kingsbury(101004429)
  */
 public class Server extends RemoteObject implements rsvinterface
 {
@@ -23,8 +20,9 @@ public class Server extends RemoteObject implements rsvinterface
  
  public static ArrayList<Integer> seats = new ArrayList<>();
  public ArrayList<plist> passengerlist = new ArrayList<>(); 
-
- 
+ int lowprice = 0;
+ int midprice=0;
+ int highprice=0;
  private static String serverName = "server";
  
  
@@ -42,9 +40,7 @@ public class Server extends RemoteObject implements rsvinterface
 		 int Eclass = 0;
 		 String bseats = "";
 		 String eseats = "";
-		 int lowprice = 0;
-		 int midprice=0;
-		 int highprice=0;
+		
 		 String b="";
 		 String e = "";
 		 
@@ -52,22 +48,23 @@ public class Server extends RemoteObject implements rsvinterface
 		for (int i=0;i<seats.size();i++) {
  			if (seats.get(i) < 5) {
  				Bclass++;
- 				bseats = bseats+seats.get(i)+", ";
+ 				bseats += seats.get(i)+", ";
  				
  			} else if (seats.get(i) == 5) {
  				Bclass++;
- 				bseats = bseats+seats.get(i);
+ 				bseats +=seats.get(i);
  				
  			} else if (seats.get(i) > 5 && seats.get(i) <30) {
  				Eclass++;
- 				eseats = eseats+seats.get(i)+", ";
+ 				eseats +=seats.get(i)+", ";
  				
  			} else if (seats.get(i) == 30) {
  				Eclass++;
- 				eseats = eseats+seats.get(i);
+ 				eseats +=seats.get(i);
  				
- 			}
- 		} //end of for loop
+ 			} //end of if/else if loop
+ 		} //end of for loop to populate eseats and bseats
+		
 		// if statements to set prices for business seats 
 		if (Bclass >0) {
 			b = " Business Class:\n";
@@ -104,7 +101,7 @@ public class Server extends RemoteObject implements rsvinterface
 				e+= "seat numbers: " + eseats;
 				
 			}
-		} else { e= "No economy Seats available.\n";} // of if else statments
+		} else { e= "No economy Seats available.\n";} // end of if else statements to populate list with accurate prices
 	String cOutput = b+e;
 	return cOutput;	
 	}
@@ -130,8 +127,7 @@ public class Server extends RemoteObject implements rsvinterface
 					available = true;
 					passengerlist.add(new plist(Pnames,Pclass,seatNumber));
 					seats.remove(i);
-	
-					cOutput = Pclass+" ticket reserved for "+Pnames;
+					cOutput = "Successfully reserved seat #"+seatNumber+" for "+Pnames;
 					break;
 				}
 				if (available == false) {
@@ -153,7 +149,6 @@ public class Server extends RemoteObject implements rsvinterface
 		String cOutput= "\n Reservations booked \n";
 		for (plist list : passengerlist) {
 			cOutput +=list+"\n";
-			//System.out.println(list+"\n");
 		}
 		cOutput +="\n end of list \n"; 
 		return cOutput;
@@ -186,7 +181,7 @@ public class Server extends RemoteObject implements rsvinterface
 	}
 
 	/**
-	 * this class is used to take all user info and correctly display them as required
+	 * this class is used to take all user info into an arraylist and correctly display them as required
 	 * @author samuel
 	 *
 	 */

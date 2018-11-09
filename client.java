@@ -9,13 +9,20 @@ import java.util.Scanner;
 
 //This is a user interface which captures user data calls the remote 
 //method that checks for validation.
-
+/**
+ * 
+ * @author Samuel Iwuno(100969921)
+ * @author Greg Kingsbury(101004429)
+ *
+ */
 public class client
 {
 	String serverName;
 	rsvinterface obj;
 	
-	
+	/**
+	 * method to establish connection to RMIinterface and server. called in clientinput()
+	 */
 	public void acceptconnection() {
 		System.out.println("attempting to establish connection to RMIserver...");
 		Registry registry;
@@ -37,7 +44,9 @@ public class client
 		
 		
 	}
-	
+	/**
+	 * method to print instructions to client
+	 */
 	public void printmenu()
 	{
 		
@@ -47,6 +56,10 @@ public class client
 		System.out.println("exit - close client connection");
 	}
 	
+	/**
+	 * method to handle all client inputs
+	 * @throws RemoteException
+	 */
 	public void clientinput() throws RemoteException
 	{
 		Scanner sc = new Scanner(System.in);
@@ -57,6 +70,9 @@ public class client
 		String[] commands = cl.split("\\s+");
 		if (commands.length == 0)
 			continue;
+		else if (commands.length ==1)
+			{System.out.println("Command not accepted, Please enter an approriate command. ");
+		continue;}
 		
 		switch (commands[0]) {
 		
@@ -72,11 +88,11 @@ public class client
 			if (commands.length !=5) {
 				System.out.println("incomplete command, fill in all the required info as shown");
 			}
-			
+			//if statements below handle error checking to ensure the correct seats/class combination are chosen
 			if (Integer.parseInt(commands[4]) <= 5 && commands[2].equals("economy")) 
-			{System.out.println("Invalid Seat and Class type, Try again");}
+			{System.out.println("failed to reserve: invalid seat number");}
 			else if (Integer.parseInt(commands[4]) > 5 && commands[2].equals("business"))
-			{System.out.println("Invalid Seat and Class type, Try again");}
+			{System.out.println("failed to reserve: invalid seat number");}
 			else {
 				serverName = commands[1];
 				acceptconnection();
@@ -89,7 +105,6 @@ public class client
 				System.out.println("incomplete command, enter details in the following format 'passengerlist <server_name>' ");
 			}
 			serverName = commands[1];
-			
 			acceptconnection();
 			System.out.println(obj.passengerlist());
 			break;
@@ -98,7 +113,7 @@ public class client
 			sc.close();
 			return;
 		default:
-				System.out.println("choose an option from the list");
+				System.out.println("invalid command, choose an option from the list");
 			
 		}
 		}
@@ -108,7 +123,10 @@ public class client
 
 	
 	
-
+/**
+ * main method to start client and keep it running
+ * @param args
+ */
 	public static void main(String[] args)
 	{
 		 client c = new client();
