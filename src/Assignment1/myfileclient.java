@@ -3,6 +3,15 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+
+
+/**
+ * 
+ * @author Samuel Iwuno(100960021)
+ * 		   Greg Kingsbury(101004429)
+ *
+ */
+
 public class myfileclient {
 	
 	public static final int serverPort = 6800;
@@ -11,22 +20,30 @@ public class myfileclient {
 	public static String host = "localhost";
 	
 	
+	
 	/**
-	 * 
+	 * returns folder 
 	 * @return
 	 */
 	private String getfolder() {return folder;}
+	
+	
+	
+	
 	/**
-	 * 
+	 * prints menu as a guideline for the client
 	 */
 	private static void menu() {
 		System.out.println("Welcome "+host+ " to the FileServer. Please select the operation you wish to perform");
-		System.out.println("menu - show main menu");
 		System.out.println("read <filename> - read file from server (i.e read rolly.txt)");
 		System.out.println("exit - close client connection");
 	}
+	
+	
+	
+	
 	/**
-	 * 
+	 * this method handles the user input
 	 * @throws IOException
 	 */
 	public void menuaction() throws IOException {
@@ -40,15 +57,11 @@ public class myfileclient {
 			continue;
 		
 		switch (commands[0]) {
-		case "menu":
-			menu();
-			continue;
 		case "read":
 			if (commands.length !=2) {
 				System.out.println("<fileName> not found on server. Please enter FQN of the file i.e read rolly.txt");
 			}
 			readfromserver(commands[1]);
-			System.out.println("File Found, Downloading....");
 			break;
 		case "exit":
 			System.out.println("Terminating Client...");
@@ -56,60 +69,85 @@ public class myfileclient {
 			return;
 		default:
 			System.out.println("Incompatible command, Please enter command from list");
-			}
-		}
-	}
+			}//end of switch
+		}//end of while loop
+	}// end of menuaction()
+	
+	
+	
 	/**
-	 * 
+	 * method to send filename to server, and if server has that file, to get it and outputs the content into a file of same name in client
 	 * @param fileName
 	 * @throws FileNotFoundException
 	 */
 	public void readfromserver(String fileName) throws FileNotFoundException {
-		int current = 0;
-		int bytesRead;
+		int current;
+		long bytesRead =0;
+		
 		try {
 			Socket socket = new Socket(host,serverPort);
 			if (socket.isConnected()) {
+				
+			/**
+			 *  sending filename to server
+			 */
 			System.out.println("connection to server established");
 			PrintStream ps = new PrintStream(socket.getOutputStream());
 			ps.println(fileName);
 			ps.flush();
 			
-			//
+		
 			
-			String filePath = getfolder()+File.separator+fileName;
-			File file = null;
-			file = new File(filePath);
-			InputStream is = socket.getInputStream();
-			FileOutputStream fos  = new FileOutputStream(file);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			byte[] b = new byte[999999999];
-			bytesRead = is.read(b,0,b.length);
-			 current = bytesRead;
-			 do {
-					System.out.println("Downloading file "+ fileName);
-					bytesRead = is.read(b, current,
-							(b.length - current));
-					if (bytesRead >= 0)
-						current += bytesRead;
-				}
-
-				while (bytesRead > -1);
-				{
-					bos.write(b, 0, current);
-					bos.flush();
-					System.out.println("Download Complete");
-				} 
+			/**
+			 * reading N(no of requests) and M(successes) statistics and size of file from server
+			 */
+			DataInputStream dis = new DataInputStream(socket.getInputStream());	
+			String Ncount = dis.readUTF();
+			String Mcount = dis.readUTF();
+			long fileSize=Long.parseLong(dis.readUTF());
 			
+			/**
+			 * creates file in client directory with contents it received from the server
+			 */
+			if (fileSize !=0)
+			{
+			
+				String filePath = getfolder()+File.separator+fileName;
+				File file = null;
+				file = new File(filePath);
+				FileOutputStream fos  = new FileOutputStream(file);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				byte[] b = new byte[1024];
+				
+			while (bytesRead < fileSize)
+			{
+				System.out.println("Downloading file "+ fileName);
+				current = dis.read(b,0,b.length);
+				bytesRead += current;
+				bos.write(b,0,b.length);
+				bos.flush();
+				
 			}
-		//	socket.close();
+			System.out.println("Download Complete");
+			bos.close();
+			System.out.println("Server has handled "+Ncount+" requests, "+Mcount+" were successful");
 			
+			
+			
+			} else {
+				System.out.println(fileName+"does not exist on the server");
+				System.out.println("Server has handled "+Ncount+" requests, "+Mcount+" were successful");
+				menuaction();
+			}//end of if statement to download files in parts
+			socket.close();
+			
+		}//end of if statement for socket connection
 		} catch (SocketException e) {
 			System.out.println("cannot create socket");
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Critical Error");
-		}
+		} //end of try/catch
 		
 		
 			
@@ -117,7 +155,7 @@ public class myfileclient {
 			
 			
 			
-	}
+	} //end of readfromserver
 	/**
 	 * 
 	 * @param args
