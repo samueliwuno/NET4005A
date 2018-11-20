@@ -2,9 +2,11 @@
 # Assignment 1
 
 
-myfileserver.java contains the java code for the file server.
-# 
-myfileclient.java contains the java code for the client.
+# myfileserver.java
+contains the java code for the file server.
+
+# myfileclient.java 
+contains the java code for the client.
 
 # Steps
 1. create cfiles and sfiles folders in project directory
