@@ -1,6 +1,6 @@
 # NET4005A
 # Assignment 3
-CODE written by Samuel Iwuno and Greg Kingsbury
+CODE written by Samuel Iwuno
 
 Class/Interface breakdown
 =============================
