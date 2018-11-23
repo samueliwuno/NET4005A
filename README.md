@@ -18,6 +18,8 @@ without having to generate the stub using wsimport
 
 Publisher.java - contains code to publish Services A and B on multiple ports(9001-9004) 
 
+Ports.java - houses the ports that the API selects to forward the client requests
+
 
 SoapClient.java - contains the code for the client machine. It contains methods to 
 communicate with the server and it also contains methods for a user input menu
