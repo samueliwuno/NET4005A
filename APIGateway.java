@@ -5,53 +5,46 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
-
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-import javax.xml.ws.spi.http.HttpExchange;
-
-//import com.sun.net.httpserver.HttpExchange;
-
+import com.sun.net.httpserver.HttpExchange;
 import assignment3.Ports;
 
 @WebService(endpointInterface = "assignment3.APIGatewayInterface")
 
 public class APIGateway implements APIGatewayInterface{
 	private Random random;
-	public String[] Logs;
-	public int requests=0;
+	public String Logs;
+	public int requestsa=0;
+	public int requestsb=0;
 	public APIGateway() {
 		this.random = new Random();
-		this.Logs = new String[100];
+		this.Logs ="";
 	}
+	
 	@Resource WebServiceContext wsContext;
-	public String chooseServer(String srv, String IP) throws MalformedURLException {
+	public String chooseServer(String srv) throws MalformedURLException {
 		String cout= "";
 
 		if (srv.equals("a"))
 		{		
-			requests++;
 			
+			int serverPort = Ports.aPorts[random.nextInt(2)];
 			
-			
-			
-			MessageContext soapContext =  wsContext.getMessageContext();
-			System.out.println(soapContext);
-			HttpExchange exchange = (HttpExchange)soapContext.
-			get("com.sun.xml.internal.ws.http.exchange");
-			
+			requestsa++;
+			MessageContext context = wsContext.getMessageContext();
+			HttpExchange exchange = (HttpExchange)context.get("com.sun.xml.internal.ws.http.exchange");
 			InetSocketAddress remoteAddress = exchange.getRemoteAddress();
 			String remoteHost = remoteAddress.getHostName();
 			InetAddress remoteAddr = remoteAddress.getAddress();
 			int clientPort = remoteAddress.getPort();
-			int serverPort = Ports.aPorts[random.nextInt(2)];
-			
-		//	Logs[requests] = "Service "+srv+" requested from Client "+remoteHost+" at: \n IP: "+remoteAddr+"and Port: "+clientPort;
+			Logs +="========================================\n";
+			Logs += "Service A requested from Client "+remoteHost+" at: \n IP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
+			Logs +="========================================\n";
 			
 			URL url = new URL("http://localhost:"+serverPort+"/MyWS/ServiceA?wsdl");
 			QName name = new QName("http://assignment3/", "MyServicesService");
@@ -62,17 +55,38 @@ public class APIGateway implements APIGatewayInterface{
 		}	else if (srv.equals("b"))
 		{
 			int serverPort = Ports.bPorts[random.nextInt(2)];
+			
+			requestsb++;
+			MessageContext context = wsContext.getMessageContext();
+			HttpExchange exchange = (HttpExchange)context.get("com.sun.xml.internal.ws.http.exchange");
+			InetSocketAddress remoteAddress = exchange.getRemoteAddress();
+			String remoteHost = remoteAddress.getHostName();
+			InetAddress remoteAddr = remoteAddress.getAddress();
+			int clientPort = remoteAddress.getPort();
+			Logs +="========================================\n";
+			Logs+= "Service B requested from Client "+remoteHost+" at: \n IP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
+			Logs +="========================================\n";
 			URL url = new URL("http://localhost:"+serverPort+"/MyWS/ServiceB?wsdl");
 			QName name = new QName("http://assignment3/", "MyServicesService");
 			Service service = Service.create(url, name);
 			ServiceInterface serv = service.getPort(ServiceInterface.class);
 			cout = serv.getServiceB();
 		} else {
-			cout = "no valid services were chosen";
+			cout = "no valid services were requested, try again";
 		}
 		
 		
 		return cout;
+	}
+	public void showLog() {
+		if (Logs.equals("")) {
+			System.out.println("No Requests have been logged");
+		} else {
+			System.out.println(Logs);
+		}
+		System.out.println("the APIGateway received "+requestsa+" requests for serviceA and "+requestsb+" requests for serviceB");
+		System.out.println("the APIGateway has handled "+(requestsa+requestsb)+" requests in total");
+		
 	}
 	
 	

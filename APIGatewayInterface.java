@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 @WebService
 public interface APIGatewayInterface {
-	@WebMethod public String chooseServer(String srv, String IP) throws MalformedURLException;
+	@WebMethod public String chooseServer(String srv) throws MalformedURLException;
+	@WebMethod public void showLog();
 
 }
