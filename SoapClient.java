@@ -14,8 +14,8 @@ public class SoapClient {
 	
 	
 	public void printmenu() {
-		System.out.println("service < a or b > <ip address> - Specify your IP address, then select Service ");
-		System.out.println("print  - Shows the requests that have been handled by the APIGateway ");
+		System.out.println("service < a or b >  choose service to request ");
+		System.out.println("print  - Shows the requests that have been handled by the APIGateway on the server console ");
 		System.out.println("exit - close client connection");
 	}
 	
@@ -55,6 +55,7 @@ public class SoapClient {
 			Service service = Service.create(url, name);
 			APIGatewayInterface ag = service.getPort(APIGatewayInterface.class);
 			ag.showLog();
+			System.out.println("Logs Printed on Server Console\n");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,6 +75,7 @@ public class SoapClient {
 	
 	
 	public static void main(String[] args) throws MalformedURLException {
+		System.out.println("Client Ready.. waiting for User Input");
 		SoapClient sc = new SoapClient();
 		sc.clientinput();
 		

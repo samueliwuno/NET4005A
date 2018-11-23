@@ -14,8 +14,13 @@ import javax.xml.ws.handler.MessageContext;
 import com.sun.net.httpserver.HttpExchange;
 import assignment3.Ports;
 
-@WebService(endpointInterface = "assignment3.APIGatewayInterface")
 
+/**
+ * 
+ * @author samuel
+ *
+ */
+@WebService(endpointInterface = "assignment3.APIGatewayInterface")
 public class APIGateway implements APIGatewayInterface{
 	private Random random;
 	public String Logs;
@@ -26,6 +31,9 @@ public class APIGateway implements APIGatewayInterface{
 		this.Logs ="";
 	}
 	
+	/**
+	 * 
+	 */
 	@Resource WebServiceContext wsContext;
 	public String chooseServer(String srv) throws MalformedURLException {
 		String cout= "";
@@ -42,9 +50,9 @@ public class APIGateway implements APIGatewayInterface{
 			String remoteHost = remoteAddress.getHostName();
 			InetAddress remoteAddr = remoteAddress.getAddress();
 			int clientPort = remoteAddress.getPort();
-			Logs +="========================================\n";
-			Logs += "Service A requested from Client "+remoteHost+" at: \n IP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
-			Logs +="========================================\n";
+			Logs +="===============request "+(requestsa+requestsb)+"====================\n";
+			Logs += "Service A requested from Client "+remoteHost+" at: \nIP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
+			Logs +="============================================\n";
 			
 			URL url = new URL("http://localhost:"+serverPort+"/MyWS/ServiceA?wsdl");
 			QName name = new QName("http://assignment3/", "MyServicesService");
@@ -63,9 +71,9 @@ public class APIGateway implements APIGatewayInterface{
 			String remoteHost = remoteAddress.getHostName();
 			InetAddress remoteAddr = remoteAddress.getAddress();
 			int clientPort = remoteAddress.getPort();
-			Logs +="========================================\n";
-			Logs+= "Service B requested from Client "+remoteHost+" at: \n IP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
-			Logs +="========================================\n";
+			Logs +="===============request "+(requestsa+requestsb)+"====================\n";
+			Logs+= "Service B requested from Client "+remoteHost+" at: \nIP: "+remoteAddr+" and Port: "+clientPort+"\nSending request to server at Port: "+serverPort+"\n";
+			Logs +="============================================\n";
 			URL url = new URL("http://localhost:"+serverPort+"/MyWS/ServiceB?wsdl");
 			QName name = new QName("http://assignment3/", "MyServicesService");
 			Service service = Service.create(url, name);
@@ -78,6 +86,9 @@ public class APIGateway implements APIGatewayInterface{
 		
 		return cout;
 	}
+	/**
+	 * 
+	 */
 	public void showLog() {
 		if (Logs.equals("")) {
 			System.out.println("No Requests have been logged");
