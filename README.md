@@ -1,6 +1,6 @@
-# NET4005A
-=================================================
-- CODE written by Samuel Iwuno
+# NET4005A  
+=================================================  
+ CODE written by Samuel Iwuno
 
 ## CODE Breakdown
 ====================================================
@@ -25,7 +25,7 @@
 perform ping tests on mininet
 
 
-## NOTES
-======================================================================================
-code for H2/H6 Blocking rules are from line 7 to 21 in L2switch.py
+## NOTES  
+======================================================================================  
+ code for H2/H6 Blocking rules are from line 7 to 21 in L2switch.py
 	
